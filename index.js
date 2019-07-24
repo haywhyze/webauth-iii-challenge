@@ -66,7 +66,7 @@ server.post('/api/login', checkCredentialsInBody, (req, res) => {
 });
 
 server.get('/api/users', restricted, (req, res) => {
-  Users.find()
+  Users.findBy({ department: req.user.department })
     .then((users) => {
       res.status(200).json(users);
     });
