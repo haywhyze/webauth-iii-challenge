@@ -5,6 +5,7 @@ const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 const Users = require('./users/users-model.js');
 const checkCredentialsInBody = require('./checkCredentialsInBody');
+const restricted = require('./restricted');
 require('dotenv').config();
 
 const server = express();
@@ -62,6 +63,13 @@ server.post('/api/login', checkCredentialsInBody, (req, res) => {
     message: 'Welcome!',
     token,
   });
+});
+
+server.get('/api/users', restricted, (req, res) => {
+  Users.find()
+    .then((users) => {
+      res.status(200).json(users);
+    });
 });
 
 const port = process.env.PORT || 5000;
