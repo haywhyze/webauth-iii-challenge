@@ -4,6 +4,7 @@ const helmet = require('helmet');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 const Users = require('./users/users-model.js');
+const checkCredentialsInBody = require('./checkCredentialsInBody');
 require('dotenv').config();
 
 const server = express();
@@ -18,7 +19,7 @@ server.get('/', (req, res) => {
 const generateToken = (id, department) => {
   const token = jwt.sign(
     {
-      userId: id,
+      subject: id,
       department,
     },
     process.env.SECRET,
@@ -53,6 +54,14 @@ server.post('/api/register', (req, res) => {
   } else {
     res.status(400).json({ message: 'Required field(s) missing' });
   }
+});
+
+server.post('/api/login', checkCredentialsInBody, (req, res) => {
+  const token = generateToken(req.user.id, req.user.department);
+  res.status(200).json({
+    message: 'Welcome!',
+    token,
+  });
 });
 
 const port = process.env.PORT || 5000;
